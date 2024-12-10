@@ -3,8 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {% include "./common/head.html" ignore missing with context %}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> {% include "./common/head.html" ignore missing with context %}
     <title>Home Page</title>
 </head>
 
@@ -16,12 +15,13 @@
         <div class="row">
             <div class="col-2">
                 <h5>Categories</h5>
-                <!-- https://getbootstrap.com/docs/5.3/components/list-group/#links-and-buttons -->
+                <!-- https://getbootstrap.com/docs/5.3/components/list-group/#links-and-buttons 
+                Q3 making the list into filter buttons. then move onto the routes file
+                -->
                 <div class="list-group">
                     {% for category in categories %}
-                        <a href="#" class="list-group-item list-group-item-action">{{ category.name }}</a>
-                    {% endfor %}
-                    </div>
+                    <button class="list-group-item list-group-item-action" hx-target="#productList" hx-swap="innerHTML" hx-get="/product/bycat/{{  category.id }}" hx-trigger="click">{{ category.name }}</button> {% endfor %}
+                </div>
 
             </div>
             <div class="col-10">
@@ -33,59 +33,66 @@
                 -->
                 <table class="table table-striped">
                     <thead>
-                      <tr>
-                        <th scope="col">Picture</th>
-                        <th scope="col">ID</th>
-                        <th scope="col">Category</th>
-                        <th scope="col">Name</th>
-                        <th scope="col">Description</th>
-                        <th scope="col">Stock</th>
-                        <th scope="col">Price</th>
-                      </tr>
+                        <tr>
+                            <th scope="col">Picture</th>
+                            <th scope="col">ID</th>
+                            <th scope="col">Category</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Description</th>
+                            <th scope="col">Stock</th>
+                            <th scope="col">Price</th>
+                        </tr>
                     </thead>
                     <tbody id="productList">
                         {% include "/product/partials/product_list.html" ignore missing with context %}
                     </tbody>
                 </table>
-                
+
                 <!-- Add Product Form -->
                 <form class="ms-2 me-auto" hx-post="/product/" hx-target="#productList" hx-swap="beforeend">
                     <fieldset>
                         <legend>Add a new product</legend>
                         <div class="mb-3">
                             <label for="category_id" class="form-label">Category</label>
-                            <input type="text" class="form-control" id="category_id" name="category_id" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="title" class="form-label">Title</label>
-                            <input type="text" class="form-control" id="title" name="title" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="description" class="form-label">Description</label>
-                            <textarea rows="2" class="form-control" id="description" name="description" required></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label for="thumbnail" class="form-label">Thumbnail URL</label>
-                            <input type="text" class="form-control" id="thumbnail" name="thumbnail" placeholder="https://">
-                        </div>
-                        <div class="mb-3">
-                            <label for="stock" class="form-label">Stock</label>
-                            <input type="number" class="form-control" id="stock" name="stock" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="price" class="form-label">Price</label>
-                            <input type="number" min="0.01" step="0.01" class="form-control" id="price" name="price" placeholder="0.00" required>
-                        </div>                       
-                        <button type="submit" class="btn btn-primary">Submit Form</button>
+                            <!--
+                            Q2
+                            get rid of the <input> for category and replace it with the following... -->
+                            <!--<input type="text" class="form-control" id="category_id" name="category_id" required>-->
+                            <select class="form-select" id="category_id" name="category_id">
+                                {% for category in categories %}
+                                <option value="{{ category.id }}">{{ category.name }}</option>
+                                {% endfor %}
+                            </select>
+                            <div class="mb-3">
+                                <label for="title" class="form-label">Title</label>
+                                <input type="text" class="form-control" id="title" name="title" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Description</label>
+                                <textarea rows="2" class="form-control" id="description" name="description" required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="thumbnail" class="form-label">Thumbnail URL</label>
+                                <input type="text" class="form-control" id="thumbnail" name="thumbnail" placeholder="https://">
+                            </div>
+                            <div class="mb-3">
+                                <label for="stock" class="form-label">Stock</label>
+                                <input type="number" class="form-control" id="stock" name="stock" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="price" class="form-label">Price</label>
+                                <input type="number" min="0.01" step="0.01" class="form-control" id="price" name="price" placeholder="0.00" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Submit Form</button>
                     </fieldset>
-                  </form>
+                </form>
 
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Load common CSS and JS -->
-    {% include "./common/dependencies.html" ignore missing with context %}
+        <!-- Load common CSS and JS -->
+        {% include "./common/dependencies.html" ignore missing with context %}
 </body>
 
 </html>
