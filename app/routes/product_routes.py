@@ -7,7 +7,7 @@ from fastapi.templating import Jinja2Templates
 from app.services.product_service import *
 from app.services.category_service import getAllCategories
 
-from app.models.product import Product
+from app.models.product import Product, new_Product
 
 router = APIRouter()
 
@@ -29,7 +29,7 @@ async def getProducts(request: Request):
 async def getProfuctUpdateForm(request: Request, id: int):
 
     # note passing of parameters to the page
-    return templates.TemplateResponse("product/partials/product_update_form.html", {"request": request, "product": getProduct(id) })
+    return templates.TemplateResponse("product/partials/product_update_form.html", {"request": request, "product": getProduct(id), "categories": getAllCategories })
 
 # https://fastapi.tiangolo.com/tutorial/request-form-models/#pydantic-models-for-forms
 @router.put("/")
@@ -39,10 +39,14 @@ def putProduct(request: Request, productData: Annotated[Product, Form()]) :
     return templates.TemplateResponse("product/partials/product_tr.html", {"request": request, "product": update_product})
 
 @router.post("/")
-def postProduct(request: Request, productData: Annotated[Product, Form()]) :
+def postProduct(request: Request, productData: Annotated[new_Product, Form()]) :
+    
     # get item value from the form POST data
     new_product = newProduct(productData)
+    
     return templates.TemplateResponse("product/partials/product_tr.html", {"request": request, "product": new_product})
+
+
 
 # https://fastapi.tiangolo.com/tutorial/request-form-models/#pydantic-models-for-forms
 
@@ -50,3 +54,9 @@ def postProduct(request: Request, productData: Annotated[Product, Form()]) :
 def delProduct(request: Request, id: int):
     deleteProduct(id)
     return templates.TemplateResponse("product/partials/product_list.html", {"request": request, "products": getAllProducts()})
+
+# Q3, add this route for the filter, then move onto the sevice file
+@router.get("/bycat/{id}")
+def filterByProduct(request: Request, id: int):
+    products = getProductByCat(id)
+    return templates.TemplateResponse("product/partials/product_list.html", {"request": request, "products": products})
